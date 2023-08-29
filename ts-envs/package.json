@@ -1,0 +1,37 @@
+{
+  "name": "ts-envs",
+  "version": "1.3.0",
+  "description": "Verification and type coercion for process.env environment variables in node.js",
+  "main": "dist/env.js",
+  "types": "dist/env.d.ts",
+  "scripts": {
+    "test": "ts-node etc/test.ts",
+    "example": "DB_URL=SQL://foo PORT=4000 PERMISSIONS={} VERBOSE=0 ts-node etc/example.ts",
+    "example:invalid": "DB_URL=SQL://foo PORT=80 CACHE_URL=redis://foo PERMISSIONS={} VERBOSE=0 ts-node etc/example.ts",
+    "example:missing": "ts-node etc/example.ts",
+    "prepublish": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ndp-software/ts-libs/tree/main/ts-env"
+  },
+  "keywords": [
+    "dotenv",
+    "env",
+    "process.env",
+    "process",
+    "var",
+    "environment",
+    "variables",
+    "loader",
+    "env-var",
+    "envvar",
+    "config",
+    "configuration",
+    "typescript",
+    "ts"
+  ],
+  "author": "Andrew Peterson",
+  "license": "Mozilla",
+  "files": ["README.md", "dist/env.d.ts", "dist/env.js", "env.ts"]
+}
