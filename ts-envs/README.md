@@ -1,4 +1,4 @@
-No-nonsense help with environmental variable processing for your Typescript project. This library provides a type `envs` variable with all your validated and typed environment variables.
+Carefully crafted help for environmental variable processing within your Typescript project. This library provides a type-safe `envs` variable with all your validated and typed environment variables.
 
 ## Introduction
 
@@ -11,10 +11,10 @@ This library, **ts-envs** is a small solution to those small problems.
 
 ## Features
 
-- Detect missing configurations in one place
-- Provide documentation about what is expected, both as help text and sample `.env` file generation.
-- Provide config defaults for optional variables
 - Provide great Typescript support, both in configuration and the variable access. Client code should not have to coerce any values.
+- Provide consistent defaults for optional env variables
+- Detect missing configurations in one place and provide nice error messages.
+- Provide documentation about what is expected, both as help text and sample `.env` file generation.
 
 ## Usage
 
@@ -76,10 +76,10 @@ The configuration for each variable name is called "metadata", and the metadata 
 
 These are fully typed, so it won't let you do silly things like specifying a default value for required variables (or vice versa). 
 
-## Validation
+### Validation
 
 It is valuable to detect a misconfigured environment and notify the programmer, and it's even better to do so early in the run cycle. To this aim, `configure` does this validation immediately when it is called.
-By default, if there is a problem, `envsValid` outputs to the `console` an easy-to-understand error message:
+If there is a problem, `configure` outputs to the `console` an easy-to-understand error message:
 ```
 Environmental variable errors!
 Missing environment variable "DB_URL"
@@ -92,7 +92,7 @@ Description: Port to listen for HTTP requests
 This output is followed by a complete "help text" that describes all the variables.
 
 ### Access
-Access the variables in `envs` (not `process.env`):
+Access the variables in `envs` (not `process.env`), as this will be correctly typed:
 
 ```ts
 const hostName: string  = envs.hostname
@@ -106,11 +106,13 @@ There are a few improvements to `process.env`:
 - If the variable _is not required_ and missing, the default value will be returned.
 - If the variable _is required_ and missing, or of the wrong type, an exception will be thrown. Without this library, these cases go undetected or errors pop up at odd times, perhaps when handling a web request in the middle of the night.
 
-## Optional Features
+## Advanced Features
 
-The one function, `configure`, above, is all the API that is needed to access your validated, typed environment variables! If you want to dig deeper, the `envs` object returned has additional features.
+The one function, `configure`, above, is all the API that is needed to access your validated, typed environment variables! 
 
 ### `envs`
+
+The `envs` object returned from `configure` has a few bonus, non-iterable properties.
 
 #### `envs.helpText: string`
 
@@ -127,11 +129,11 @@ The one function, `configure`, above, is all the API that is needed to access yo
 
 #### `envs.dotEnvExample: string`
 
-Similar to the help text, this outputs a template example `.env` file for usage with libraries that follow that convention. This may be useful if you are retrofitting an existing codebase without such a file.
+Similar to the help text, this outputs a template example `.env` file for usage with libraries that follow that convention (or Node >= 20). This may be useful if you are retrofitting an existing codebase without such a file. You'll have to call this explicitly to create the file.
 
 #### `envsValid(): boolean`
 
-If you want to do validation elsewhere, or in more detail, this default can be suppressed and validation done manually:
+If you want to do validation elsewhere, or in more detail, default validation can be suppressed, and then validation done manually:
 
 1. Turn off the default validation by passing `{ validate: false }` as a second parameter to `configure`.
 
@@ -139,6 +141,7 @@ If you want to do validation elsewhere, or in more detail, this default can be s
 
 3. Explain the problem to the user by looking at `envs.errors`, an array of error messages:
 ```ts
+const envs = configure({...}, {validate: false})
 if (!envs.envsValid())
   // do something with envs.errors
   process.exit(1)
@@ -146,19 +149,20 @@ if (!envs.envsValid())
 
 #### `env.errors: Array<string>`
 
-`env.errors` is an array of strings spelling out the errors. This is accessed automatically in `envsValid` above, but they are made available for any other usage.
+`env.errors` is an array of strings describing the errors. This is accessed automatically in default validation, but is available for any other usage.
 
 ### Metadata
 
-Metadata may also include a validation function, `valid()`. It will be called after the value is found and coerced to the correct type, but before the variable is returned. This can check the value of an integer is in a certain range, or run a regular expression to pre-check a URL or similar. Or perhaps verify that passwords are not being provided in database configuration strings. Or perhaps check the integrity between multiple environment variables. This function should return `true` or `false`.
+In addition the the description, type and name, metadata may also include a validation function, `valid()`. It will be called after the value is found and coerced to the correct type, but before the value is returned. This can check the value of an integer is in a certain range, or run a regular expression to pre-check a URL or similar. Or perhaps verify that passwords are not being provided in database configuration strings. Or perhaps check the integrity between multiple environment variables. This function should return `true` or `false`.
 
-## Off-Label Usage
+## In Closing...
+### Off-Label Usage
 
 There's nothing about this library that will prevent one from using multiple instances. This is not recommended. 
 
-For the Typescript library you are writing, if you have a configuration, I strongly advise you make an explicit configuration mechanism, allowing the host to set configs explicitly. Do not use environment variables. Piggy-backing on the host's environment is not only a misplacement of responsibilities, it's also quite hard for developers to untangle.
+If you're creating a Typescript library, I strongly advise you **not** to use ENVs, and instead make an explicit configuration mechanism, allowing the host to set configs explicitly. Piggy-backing on the host applications ENVs is not only a misplacement of responsibilities, it can also be quite hard for developers to untangle.
 
-## Non-Features
+### Non-Features
 This library does not aim to:
 - Create some sort of hierarchy out of your environment variables, based on their names.
 - Allow you to create aliases of environment variables, so they have multiple names.
@@ -168,7 +172,7 @@ This library does not aim to:
 
 If you want some of those features...
 
-## Similar Projects (if you don't like this one)
+### Similar Projects (if you don't like this one)
 
 - https://www.npmjs.com/package/znv: Parses using zod types. 
 - https://www.npmjs.com/package/env-var: Verification, sanitization, and type coercion for environment variables in Node.js and web applications. Supports TypeScript! Somewhat deeper features, but slightly fussier syntax. 
@@ -181,6 +185,10 @@ If you want some of those features...
 - https://www.npmjs.com/package/getenv2: Uses joi for types, and also defaults per environment
 - https://www.npmjs.com/package/strict-env-conf: Similar motivation; builds hierarchy of values
 - https://www.npmjs.com/package/safe-env-vars: Verification build on `get`.
+
+## CONTRIBUTING
+
+Of course! Standard conventions apply.
 
 ## NOTES
 
