@@ -1,6 +1,6 @@
 {
   "name": "ts-envs",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "Verification and type coercion for process.env environment variables in node.js",
   "main": "dist/env.js",
   "types": "dist/env.d.ts",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ndp-software/ts-libs/tree/main/ts-env"
+    "url": "https://github.com/ndp-software/ts-libs/tree/main/ts-envs"
   },
   "keywords": [
     "dotenv",
