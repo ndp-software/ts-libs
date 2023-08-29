@@ -1,0 +1,31 @@
+{
+  "name": "ts-playground",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rimraf ./build && tsc",
+    "lint": "eslint . --ext .ts",
+    "lint-and-fix": "eslint . --ext .ts --fix",
+    "start:dev": "nodemon",
+    "start": "npm run build && node build/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Andrew Peterson",
+  "license": "Mozilla",
+  "devDependencies": {
+    "@type-challenges/utils": "^0.1.1",
+    "@types/node": "^20.2.1",
+    "@typescript-eslint/eslint-plugin": "^5.59.6",
+    "@typescript-eslint/parser": "^5.59.6",
+    "eslint": "^8.40.0",
+    "nodemon": "^3.0.1",
+    "rimraf": "^5",
+    "ts-node": "^10.9.1",
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "vexflow": "^4.1.0"
+  }
+}
