@@ -10,7 +10,10 @@
     "example": "DB_URL=SQL://foo PORT=4000 PERMISSIONS={} VERBOSE=0 ts-node etc/example.ts",
     "example:invalid": "DB_URL=SQL://foo PORT=80 CACHE_URL=redis://foo PERMISSIONS={} VERBOSE=0 ts-node etc/example.ts",
     "example:missing": "ts-node etc/example.ts",
-    "prepublish": "tsc"
+    "prepublish": "rimraf ./dist && tsc",
+    "lint": "eslint . --ext .ts",
+    "lint-and-fix": "eslint . --ext .ts --fix",
+    "start:dev": "nodemon"
   },
   "repository": {
     "type": "git",
@@ -32,7 +35,23 @@
     "typescript",
     "ts"
   ],
+  "devDependencies": {
+    "@type-challenges/utils": "*",
+    "@types/node": "*",
+    "@typescript-eslint/eslint-plugin": "*",
+    "@typescript-eslint/parser": "*",
+    "eslint": "*",
+    "nodemon": "*",
+    "rimraf": "*",
+    "ts-node": "*",
+    "typescript": "*"
+  },
   "author": "Andrew Peterson",
-  "license": "Mozilla",
-  "files": ["README.md", "dist/env.d.ts", "dist/env.js", "env.ts"]
+  "license": "MPL-2.0",
+  "files": [
+    "README.md",
+    "dist/env.d.ts",
+    "dist/env.js",
+    "env.ts"
+  ]
 }
