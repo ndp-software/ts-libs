@@ -1,6 +1,6 @@
 {
   "name": "ts-retryable",
-  "version": "0.9.1",
+  "version": "0.9.3",
   "description": "Wrap a promise and make it retryable",
   "homepage": "https://github.com/ndp-software/ts-libs/tree/main/ts-retryable",
   "main": "dist/retryable.js",
@@ -21,6 +21,9 @@
     "timeout",
     "failure",
     "robust",
+    "composition",
+    "fetch",
+    "apis",
     "typescript",
     "ts"
   ],
