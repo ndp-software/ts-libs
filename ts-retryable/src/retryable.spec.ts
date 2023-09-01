@@ -1,11 +1,11 @@
-import {makeRetryable} from "./makeRetryable";
+import {retryable} from "./retryable";
 import {asyncCycle, rejectNTimesThenResolve} from "./spec-helpers";
 import assert from "node:assert";
 import {describe, afterEach, mock, it as specify} from "node:test";
 import {sleep} from "./promise";
 
 
-describe('makeRetryable (async)', () => {
+describe('retryable', () => {
 
   const options = {shouldRetry: (e: any) => false}
   const alwaysThrow = function () {
@@ -23,7 +23,7 @@ describe('makeRetryable (async)', () => {
   })
 
   specify('returns original function result', async () => {
-    const wrapped = makeRetryable(async () => 'foo', options)
+    const wrapped = retryable(async () => 'foo', options)
 
     const result = await wrapped()
 
@@ -31,7 +31,7 @@ describe('makeRetryable (async)', () => {
   })
 
   specify('does not call `shouldRetry` option if promise resolves', async () => {
-    const wrapped = makeRetryable(async () => 'foo', options)
+    const wrapped = retryable(async () => 'foo', options)
     const spy = mock.method(options, 'shouldRetry')
 
     await wrapped()
@@ -45,7 +45,7 @@ describe('makeRetryable (async)', () => {
     }
     const spy = mock.method(api, 'doItRemotely')
 
-    api.doItRemotely = makeRetryable(api.doItRemotely, options)
+    api.doItRemotely = retryable(api.doItRemotely, options)
 
     const result = await api.doItRemotely(4)
 
@@ -55,7 +55,7 @@ describe('makeRetryable (async)', () => {
 
   specify('rejecting a promise calls `shouldRetry`', async () => {
     const retryableSpy = mock.method(options, 'shouldRetry')
-    const wrapped = makeRetryable(async () => Promise.reject('an exception'), options)
+    const wrapped = retryable(async () => Promise.reject('an exception'), options)
 
     try {
       await wrapped()
@@ -66,7 +66,7 @@ describe('makeRetryable (async)', () => {
   })
 
   specify('throws exception if `shouldRetry` returns false', async () => {
-    const wrapped = makeRetryable(alwaysReject, {
+    const wrapped = retryable(alwaysReject, {
       ...options,
       shouldRetry: () => false
     })
@@ -81,7 +81,7 @@ describe('makeRetryable (async)', () => {
 
 
   specify('throws exception if `shouldRetry` returns Promise<false>', async () => {
-    const wrapped = makeRetryable(alwaysReject, {
+    const wrapped = retryable(alwaysReject, {
       ...options,
       shouldRetry: () => Promise.resolve(false)
     })
@@ -97,7 +97,7 @@ describe('makeRetryable (async)', () => {
 
   specify('calls again if `shouldRetry` returns true', async () => {
     const spy = mock.fn(alwaysReject)
-    const wrapped = makeRetryable(spy, {
+    const wrapped = retryable(spy, {
       ...options,
       shouldRetry: (count) => count === 1
     })
@@ -113,7 +113,7 @@ describe('makeRetryable (async)', () => {
 
   specify('calls again if `shouldRetry` returns Promise<true>', async () => {
     const spy = mock.fn(alwaysReject)
-    const wrapped = makeRetryable(spy, {
+    const wrapped = retryable(spy, {
       ...options,
       shouldRetry: (count) => Promise.resolve(count === 1)
     })
@@ -133,7 +133,7 @@ describe('makeRetryable (async)', () => {
     }
     const retryableSpy = mock.fn(retrySome)
 
-    const wrapped = makeRetryable(
+    const wrapped = retryable(
       asyncCycle('throw too soon', 'throw too soon', 'throw too soon',  'foo'), {
       ...options,
       shouldRetry: retryableSpy
@@ -151,7 +151,7 @@ describe('makeRetryable (async)', () => {
     }
     const retryableSpy = mock.fn(retrySome)
 
-    const wrapped = makeRetryable(
+    const wrapped = retryable(
       rejectNTimesThenResolve(10, 'foo', 'too soon'), {...options, shouldRetry: retryableSpy})
 
     const result = wrapped() as Promise<string>
@@ -171,7 +171,7 @@ describe('makeRetryable (async)', () => {
     }
     const retryableSpy = mock.fn(retrySome)
 
-    const wrapped = makeRetryable(rejectNTimesThenResolve(999, 'foo', 'too soon'), {
+    const wrapped = retryable(rejectNTimesThenResolve(999, 'foo', 'too soon'), {
       ...options,
       delay: 0,
       shouldRetry: retryableSpy
@@ -187,7 +187,7 @@ describe('makeRetryable (async)', () => {
     const retrySome = function (count: number) {
       return count < 2
     }
-    const wrapped = makeRetryable(asyncCycle('throw me', 'a'), {...options, shouldRetry: retrySome})
+    const wrapped = retryable(asyncCycle('throw me', 'a'), {...options, shouldRetry: retrySome})
 
     assert.deepEqual([await wrapped(), await wrapped(), await wrapped(), await wrapped(), await wrapped()],
       ['a', 'a', 'a', 'a', 'a'])
@@ -197,7 +197,7 @@ describe('makeRetryable (async)', () => {
 
     // mock.timers.enable(['setTimeout'])
 
-    const wrapped = makeRetryable(
+    const wrapped = retryable(
       asyncCycle('throw too soon', 'zesh'), {
         ...options,
         shouldRetry: () => true,

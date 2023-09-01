@@ -34,7 +34,7 @@ interface Options<E = unknown> {
  *    could implement exponential backoff ala `(c) => Math.pow(2, c) * 1000`
  *    or some other mechanism.
  */
-export function makeRetryable<
+export function retryable<
   This,
   Args extends Array<unknown>,
   RetType,

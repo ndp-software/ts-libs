@@ -28,7 +28,7 @@ interface Options<E = unknown> {
  *
  */
 
-export function makeRetryableSync<
+export function retryableSync<
   This,
   Args extends Array<unknown>,
   RetType = void,

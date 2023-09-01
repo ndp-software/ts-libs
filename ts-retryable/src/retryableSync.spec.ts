@@ -1,26 +1,21 @@
-import {makeRetryableSync} from "./makeRetryableSync";
+import {retryableSync} from "./retryableSync";
 import {syncCycle} from "./spec-helpers";
 import assert from "node:assert";
 import {describe, afterEach, mock, it as specify } from "node:test";
 
-describe('makeRetryableSync', () => {
+describe('retryableSync', () => {
 
   const options = {shouldRetry: (e: any) => false}
   const alwaysThrow = function () {
     throw 'an exception'
   }
 
-  const alwaysReject = function (): Promise<void> {
-    throw 'an exception'
-  }
-
-
   afterEach(() => {
     mock.reset()
   })
 
   specify('returns original function result', () => {
-    const wrapped = makeRetryableSync(() => 'foo', options)
+    const wrapped = retryableSync(() => 'foo', options)
 
     const result = wrapped()
 
@@ -30,7 +25,7 @@ describe('makeRetryableSync', () => {
   specify('original function receives wrapped function’s parameters', async () => {
     const spy = mock.fn((a: number, b: string) => Promise.resolve('haha'))
 
-    const wrapped = makeRetryableSync(spy, options)
+    const wrapped = retryableSync(spy, options)
 
     const result = await wrapped(1, 'a')
 
@@ -40,7 +35,7 @@ describe('makeRetryableSync', () => {
   })
 
   specify('does not call `shouldRetry` option if no error', () => {
-    const wrapped = makeRetryableSync(() => 'foo', options)
+    const wrapped = retryableSync(() => 'foo', options)
     const spy = mock.method(options, 'shouldRetry')
 
     wrapped()
@@ -54,7 +49,7 @@ describe('makeRetryableSync', () => {
     }
     const spy = mock.method(api, 'doItRemotely')
 
-    api.doItRemotely = makeRetryableSync(api.doItRemotely, options)
+    api.doItRemotely = retryableSync(api.doItRemotely, options)
 
     const result = api.doItRemotely(4)
 
@@ -68,7 +63,7 @@ describe('makeRetryableSync', () => {
     }
     const spy = mock.method(api, 'alwaysThrow')
 
-    api.alwaysThrow = makeRetryableSync(
+    api.alwaysThrow = retryableSync(
       api.alwaysThrow,
       {
         shouldRetry(count: number): boolean {
@@ -90,7 +85,7 @@ describe('makeRetryableSync', () => {
 
   specify('throwing an exception calls `shouldRetry`', () => {
     const retryableSpy = mock.method(options, 'shouldRetry')
-    const wrapped = makeRetryableSync(alwaysThrow, options)
+    const wrapped = retryableSync(alwaysThrow, options)
 
     try {
       wrapped()
@@ -101,7 +96,7 @@ describe('makeRetryableSync', () => {
   })
 
   specify('throws exception if `shouldRetry` says false', () => {
-    const wrapped = makeRetryableSync(alwaysThrow, {
+    const wrapped = retryableSync(alwaysThrow, {
       ...options,
       shouldRetry: () => false
     })
@@ -116,7 +111,7 @@ describe('makeRetryableSync', () => {
 
   specify('calls again if `shouldRetry` returns true', () => {
     const spy = mock.fn(alwaysThrow)
-    const wrapped = makeRetryableSync(spy, {
+    const wrapped = retryableSync(spy, {
       ...options,
       shouldRetry: (count) => count === 1
     })
@@ -136,7 +131,7 @@ describe('makeRetryableSync', () => {
     }
     const retryableSpy = mock.fn(retrySome)
     const spy = mock.fn(alwaysThrow)
-    const wrapped = makeRetryableSync(spy, {
+    const wrapped = retryableSync(spy, {
       ...options,
       shouldRetry: retryableSpy
     })
@@ -155,7 +150,7 @@ describe('makeRetryableSync', () => {
     const retrySome = function (count: number) {
       return count < 2
     }
-    const wrapped = makeRetryableSync(syncCycle('throw me', 'a'), {...options, shouldRetry: retrySome})
+    const wrapped = retryableSync(syncCycle('throw me', 'a'), {...options, shouldRetry: retrySome})
 
     assert.deepEqual([wrapped(), wrapped(), wrapped(), wrapped(), wrapped()],
       ['a', 'a', 'a', 'a', 'a'])
