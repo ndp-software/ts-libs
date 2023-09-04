@@ -1,11 +1,11 @@
 {
   "name": "ts-retryable",
-  "version": "0.9.3",
+  "version": "0.9.6",
   "description": "Wrap a promise and make it retryable",
   "homepage": "https://github.com/ndp-software/ts-libs/tree/main/ts-retryable",
   "main": "dist/retryable.js",
   "type": "module",
-  "types": ["dist/retryable.d.ts", "dist/retryableSync.d.ts"],
+  "types": "dist/*.d.ts",
   "scripts": {
     "test": "node --loader tsx --test src/*.spec.ts",
     "prepublish": "rimraf dist/* && tsc"
@@ -31,8 +31,15 @@
   "license": "MPL-2.0",
   "files": [
     "README.md",
-    "dist/**/*",
-    "src/**/*.ts"
+    "dist/promise.d.ts",
+    "dist/promise.js",
+    "dist/retryable.d.ts",
+    "dist/retryable.js",
+    "dist/retryableSync.d.ts",
+    "dist/retryableSync.js",
+    "src/promise.ts",
+    "src/retryable.ts",
+    "src/retryableSync.ts"
   ],
   "devDependencies": {
     "@type-challenges/utils": "^0.1.1",
@@ -40,10 +47,7 @@
     "@typescript-eslint/eslint-plugin": "^5.59.6",
     "@typescript-eslint/parser": "^5.59.6",
     "eslint": "^8.40.0",
-    "nodemon": "^3.0.1",
     "rimraf": "^5",
-    "ts-node": "^10.9.1",
-    "tsx": "^3.12.7",
     "typescript": "^5"
   }
 }
