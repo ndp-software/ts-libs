@@ -1,0 +1,19 @@
+{
+  "name": "ts-retryable-test",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "tsx src/index.ts"
+  },
+  "keywords": [],
+  "author": "Andrew Peterson",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.5.9",
+    "ts-retryable": "*",
+    "tsx": "*",
+    "typescript": "*"
+  }
+}
