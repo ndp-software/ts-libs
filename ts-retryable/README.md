@@ -67,7 +67,8 @@ failure for Promise/async functions means returning a rejected promise).
 
 Lots of these solutions are (1) not Typescript (2) function specific, such as `fetch` only. Feel free to try any of them.
 
-- very similar: https://www.npmjs.com/package/as-retryable-promise
+- similar: [ts-retry](https://www.npmjs.com/package/ts-retry)
+- similar: https://www.npmjs.com/package/as-retryable-promise (separates retry question into count and function)
 - https://github.com/jonbern/fetch-retry nice version
 - https://www.chrisarmstrong.dev/posts/retry-timeout-and-cancel-with-fetch
 - https://github.com/poetic/retryable-promise
