@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ndp-software/ts-libs/tree/main/ts-envs"
+    "url": "https://github.com/ndp-software/ts-libs"
   },
   "keywords": [
     "dotenv",
@@ -37,9 +37,9 @@
   ],
   "devDependencies": {
     "@type-challenges/utils": "*",
-    "@types/node": "*",
-    "@typescript-eslint/eslint-plugin": "*",
-    "@typescript-eslint/parser": "*",
+    "@types/node": "^20.5.9",
+    "@typescript-eslint/eslint-plugin": "^6.6.0",
+    "@typescript-eslint/parser": "^6.6.0",
     "eslint": "*",
     "nodemon": "*",
     "rimraf": "*",
