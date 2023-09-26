@@ -27,7 +27,7 @@ import {configure} from "ts-envs";
 
 export const envs = configure({
   debug: { description: "Debug mode. Off by default",
-    required: false, default: false }
+    type: 'boolean', required: false, default: false }
 })
 
 // ... 
