@@ -18,6 +18,12 @@ This library, **ts-envs** is a small solution to those small problems.
 
 ## Usage
 
+## Install
+
+```zsh
+> npm i ts-envs
+```
+
 ### `configure`
 When using this package, simply replace uses of `process.env[]` with an alternative object. It's called `envs` in this documentation, but you can call it whatever you want. Initialize it with the `configure` function, exporting it so that it can be used within the codebase.
 
