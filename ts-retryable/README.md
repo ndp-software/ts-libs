@@ -4,6 +4,10 @@ const lessFlaky = retryable(flaky, {shouldRetry: () => true})
 ```
 
 ## Example
+```zsh
+> npm i ts-retryable
+```
+
 ```ts
 import { retryable } from 'ts-retryable'
 import nodeFetch from "node-fetch";
