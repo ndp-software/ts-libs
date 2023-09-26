@@ -153,7 +153,7 @@ if (!envs.envsValid())
 
 ### Metadata
 
-In addition the the description, type and name, metadata may also include a validation function, `valid()`. It will be called after the value is found and coerced to the correct type, but before the value is returned. This can check the value of an integer is in a certain range, or run a regular expression to pre-check a URL or similar. Or perhaps verify that passwords are not being provided in database configuration strings. Or perhaps check the integrity between multiple environment variables. This function should return `true` or `false`.
+In addition the the `description`, `type` and `name`, metadata may also include a validation function, `valid()`. It will be called after the value is found and coerced to the correct type, but before the value is returned. This can check the value of an integer is in a certain range, or run a regular expression to pre-check a URL or similar. Or perhaps verify that passwords are not being provided in database configuration strings. Or perhaps check the integrity between multiple environment variables. This function should return `true` or `false`.
 
 ## In Closing...
 ### Off-Label Usage
