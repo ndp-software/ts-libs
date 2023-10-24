@@ -1,10 +1,16 @@
 {
   "name": "ts-envs",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "Verification and type coercion for process.env environment variables in node.js",
   "homepage": "https://github.com/ndp-software/ts-libs/tree/main/ts-envs",
-  "main": "dist/env.js",
-  "types": "dist/env.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/env.d.ts",
+      "require": "./dist/env.js",
+      "default": "./dist/env.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "test": "ts-node etc/test.ts",
     "example": "DB_URL=SQL://foo PORT=4000 PERMISSIONS={} VERBOSE=0 ts-node etc/example.ts",
@@ -17,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ndp-software/ts-libs"
+    "url": "git+https://github.com/ndp-software/ts-libs.git"
   },
   "keywords": [
     "dotenv",
