@@ -48,7 +48,7 @@ type EnvMetadata =
   OptionalMetadata<EnvMetaStringBase> |
   OptionalMetadata<EnvMetaDefaultStringBase>
 
-type EnvsConfiguration = Record<string, EnvMetadata>
+export type EnvsConfiguration = Record<string, EnvMetadata>
 
 type EnvsAccessor<T extends EnvsConfiguration> =
   {
