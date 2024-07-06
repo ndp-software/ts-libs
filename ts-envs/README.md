@@ -66,7 +66,7 @@ export const envs = configure({
     type:        'boolean',
     description: 'Log more stuff',
     required:     false,
-    default:      false
+    default:      false 
   }
 })
 ```
@@ -199,6 +199,10 @@ Of course! Standard conventions apply.
 ## NOTES
 
 - Created package using https://medium.com/cameron-nokes/the-30-second-guide-to-publishing-a-typescript-package-to-npm-89d93ff7bccd
+
+## DEVELOPMENT / DISTRIBUTION
+
+`npm publish`
 
 ## TODOs
 

@@ -17,7 +17,7 @@ const envs = configure({
     type: 'integer',
     description: 'required integer, must be >= 1000',
     required: true,
-    valid: (i) => i >= 1000
+    valid: (i: number) => i >= 1000
   },
   threads: {
     type: 'integer',
