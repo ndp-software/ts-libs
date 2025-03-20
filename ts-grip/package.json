@@ -1,0 +1,25 @@
+{
+  "name": "ts-grip",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "tsx --test src/*spec.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [],
+  "author": "Andrew Peterson dba NDP Software",
+  "license": "MIT",
+  "description": "",
+  "files": [
+    "package.json",
+    "src/grip.ts",
+    "dist/grip.js",
+    "dist/*.d.ts"
+  ],
+  "devDependencies": {
+    "typescript": "^4.5",
+    "@types/node": "^20",
+    "tsx": "^4.19"
+  }
+}
