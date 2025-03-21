@@ -1,6 +1,7 @@
 import {describe, it as spec} from "node:test";
-import {objectPropGrip, propGrip, valueGrip} from "./grip";
 import assert from "node:assert/strict";
+import {valueGrip} from "./valueGrip";
+import {objectPropGrip, propGrip} from "./objectProp";
 
 describe('objPropGrip', () => {
   spec('basic get and set', () => {

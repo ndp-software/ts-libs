@@ -1,6 +1,6 @@
 import {beforeEach, describe, it as spec, mock} from "node:test";
-import {localStorageJSONGrip, localStorageStringGrip} from "./grip";
 import assert from "node:assert/strict";
+import {localStorageJSONGrip, localStorageStringGrip} from "./localStorage";
 
 
 describe('localStorageStringGrip', () => {

@@ -1,6 +1,7 @@
 import {describe, it as spec} from "node:test";
 import assert from "node:assert/strict";
-import {valueGrip} from "./grip";
+
+import {valueGrip} from "./valueGrip";
 
 describe('valueGrip', () => {
   spec('can store numbers', () => {

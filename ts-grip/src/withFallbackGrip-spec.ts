@@ -1,6 +1,7 @@
 import {describe, it as spec} from "node:test";
-import {valueGrip, withFallbackGrip} from "./grip";
 import assert from "node:assert/strict";
+import {valueGrip} from "./valueGrip";
+import {withFallbackGrip} from "./withFallbackGrip";
 
 
 describe('withFallbackGrip', () => {

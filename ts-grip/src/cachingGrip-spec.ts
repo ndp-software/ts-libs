@@ -1,6 +1,8 @@
 import {describe, it as spec} from "node:test";
-import {cachingGrip, manualGrip, valueGrip} from "./grip";
 import assert from "node:assert/strict";
+import {manualGrip} from "./manualGrip";
+import {cachingGrip} from "./cachingGrip";
+import {valueGrip} from "./valueGrip";
 
 describe('cachingGrip', () => {
 
@@ -43,11 +45,22 @@ describe('cachingGrip', () => {
 
     assert.equal(caching.value, 0);
 
-    grip.set(1);
+    grip.set(1);  // WRONG usage, cachingGrip doesn't know
     assert.equal(caching.value, 0); // Should still return cached value
 
     caching.expire()
     assert.equal(caching.value, 1)
+  })
+
+  spec('should expire automatically if observable', () => {
+    const grip = valueGrip(0).observable
+    const caching = cachingGrip(grip)
+
+    assert.equal(caching.value, 0)
+
+    grip.set(1) // not telling the cachingGrip
+
+    assert.equal(caching.value, 1) // ...but it knows.
   })
 
 });

@@ -1,6 +1,7 @@
 import {describe, it as spec} from "node:test";
-import {readOnlyGrip, valueGrip} from "./grip";
 import assert from "node:assert/strict";
+import {readOnlyGrip} from "./grip";
+import {valueGrip} from "./valueGrip";
 
 describe('readOnlyGrip', () => {
   spec('prevents modification to underlying grip', () => {

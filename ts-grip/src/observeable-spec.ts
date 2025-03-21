@@ -1,6 +1,7 @@
 import {describe, it as spec, mock} from "node:test";
-import {observeableGrip, valueGrip} from "./grip";
 import assert from "node:assert/strict";
+import {observeableGrip} from "./grip";
+import {valueGrip} from "./valueGrip";
 
 describe('observeableGrip', () => {
   spec('can observe a change', async () => {

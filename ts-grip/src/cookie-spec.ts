@@ -1,6 +1,6 @@
 import {describe, it as spec} from "node:test";
-import {cookieGrip} from "./grip";
 import assert from "node:assert/strict";
+import {cookieGrip} from "./cookie";
 
 
 describe('cookieGrip', () => {

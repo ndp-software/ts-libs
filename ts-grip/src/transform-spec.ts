@@ -1,6 +1,7 @@
 import {describe, it as spec} from "node:test";
-import {transformGrip, valueGrip} from "./grip";
 import assert from "node:assert/strict";
+import {transformGrip} from "./transformGrip";
+import {valueGrip} from "./valueGrip";
 
 describe('transformGrip', () => {
   spec('can convert from String to Int', () => {

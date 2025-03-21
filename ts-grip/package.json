@@ -4,6 +4,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
+    "clean": "rm -fr dist/*",
     "test": "tsx --test src/*spec.ts",
     "prepublishOnly": "npm run build"
   },
@@ -13,8 +14,18 @@
   "description": "",
   "files": [
     "package.json",
+    "src/withFallbackGrip.ts",
+   " src/guarded.ts",
+    "src/manualGrip.ts",
+    "src/objectProp.ts",
+    "src/transformGrip.ts",
+    "src/valueGrip.ts",
+    "src/cachingGrip.ts",
+    "src/cookie.ts",
+    "src/index.ts",
     "src/grip.ts",
-    "dist/grip.js",
+    "src/localStorage.ts",
+    "dist/*.js",
     "dist/*.d.ts"
   ],
   "devDependencies": {

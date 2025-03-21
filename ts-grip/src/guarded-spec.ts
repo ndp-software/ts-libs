@@ -1,6 +1,7 @@
 import {describe, it as spec} from "node:test";
-import {guardedGrip, valueGrip} from "./grip";
 import assert from "node:assert/strict";
+import {guardedGrip} from "./guarded";
+import {valueGrip} from "./valueGrip";
 
 describe('guardedGrip', () => {
   spec('should use source grip value when guard function returns false', () => {
