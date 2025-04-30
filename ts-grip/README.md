@@ -236,3 +236,8 @@ const grip = localStorageJSONGrip('key', { default: 'value' });
 ## License
 
 This project is licensed under the MIT License.
+
+
+## TODOs
+
+- [ ] is an observable grip also observable. discuss.
