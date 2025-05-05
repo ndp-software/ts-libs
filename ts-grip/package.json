@@ -14,6 +14,7 @@
   "description": "Grips for TypeScript",
   "types": [
     "dist/index.d.ts",
+    "dist/asAsync.d.ts",
     "dist/withFallbackGrip.d.ts",
     "dist/guarded.d.ts",
     "dist/manualGrip.d.ts",
@@ -28,6 +29,7 @@
   "files": [
     "package.json",
     "dist/*",
+    "src/asAsync.ts",
     "src/withFallbackGrip.ts",
    " src/guarded.ts",
     "src/manualGrip.ts",
