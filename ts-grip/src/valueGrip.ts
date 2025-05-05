@@ -23,6 +23,10 @@ export class ValueGrip<T> extends Grip<T> {
     return this._val
   }
 
+  toString() {
+    return `ValueGrip(${this._val})`
+  }
+
 }
 
 /**
