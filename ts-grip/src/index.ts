@@ -8,4 +8,10 @@ export * from './valueGrip'
 export * from './cachingGrip'
 export * from './cookie'
 export * from './index'
-export * from './localStorage'
+export * from './localStorageJSON'
+export * from './localStorageString'
+export {isPromise} from "./util";
+export {isFunction} from "./util";
+export {isGrip} from "./util";
+export {localStorageStringGrip} from "./localStorageString";
+export {localStorageJSONGrip} from "./localStorageJSON";

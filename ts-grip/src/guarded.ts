@@ -1,25 +1,7 @@
 import {Grip} from "./grip";
 import {manualGrip} from "./manualGrip";
+import {isFunction, isGrip, isPromise} from "./util";
 
-
-function isGrip<T>(value: unknown): value is Grip<T> {
-  return value instanceof Grip<T>;
-}
-
-/*
-An `isPromise` detector that narrows the type of the promise return type,
-when returning `true`.
- */
-export function isPromise<T = any>(obj: any):
-  obj is T extends { then: (...args: unknown[]) => unknown } ? Promise<Awaited<T>> : never {
-  return !!obj &&
-    (typeof obj === 'object' || typeof obj === 'function') &&
-    typeof obj.then === 'function';
-}
-
-function isFunction(obj: unknown): obj is Function {
-  return typeof obj === 'function'
-}
 
 function isSyncGuard(obj: any): obj is SyncGuard {
   return (isGrip(obj) && typeof obj.value === 'boolean')

@@ -38,7 +38,8 @@
     "src/cookie.ts",
     "src/index.ts",
     "src/grip.ts",
-    "src/localStorage.ts",
+    "src/localStorageJSON.ts",
+    "src/localStorageString.ts",
     "dist/*.js",
     "dist/*.d.ts"
   ],
