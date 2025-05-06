@@ -6,52 +6,63 @@ import {withFallbackGrip} from "./withFallbackGrip";
 
 describe('withFallbackGrip', () => {
   spec('uses a base value', () => {
-    const b = valueGrip<string>('foo')
-    const o = valueGrip('bar')
-    const grip = withFallbackGrip(o, b)
+    const fbGrip = valueGrip<string>('foo')
+    const pGrip = valueGrip('bar')
+    const grip = withFallbackGrip(pGrip, fbGrip)
 
     assert.equal(grip.value, 'bar')
   })
   spec('uses an override value', () => {
-    const b = valueGrip<string>('foo')
-    const o = valueGrip(undefined)
-    const grip = withFallbackGrip(o, b)
+    const fbGrip = valueGrip<string>('foo')
+    const pGrip = valueGrip(undefined)
+    const grip = withFallbackGrip(pGrip, fbGrip)
 
     assert.equal(grip.value, 'foo')
   })
+  spec('uses an overide value based on function', () => {
+    const pGrip = valueGrip<string>('foo')
+    const fbGrip = valueGrip('bar')
+    let useFallback: boolean
+    const grip = withFallbackGrip(pGrip, fbGrip, () => useFallback)
+
+    useFallback = true
+    assert.equal(grip.value, 'bar')
+    useFallback = false
+    assert.equal(grip.value, 'foo')
+  })
   spec('updates just the base', () => {
-    const b = valueGrip<string>('foo')
-    const o = valueGrip(undefined as unknown as string)
-    const grip = withFallbackGrip(o.readOnly, b)
+    const fbGrip = valueGrip<string>('foo')
+    const pGrip = valueGrip(undefined as unknown as string)
+    const grip = withFallbackGrip(pGrip.readOnly, fbGrip)
 
     grip.set('bar')
 
-    assert.equal(b.value, 'bar')
-    assert.equal(o.value, undefined)
+    assert.equal(fbGrip.value, 'bar')
+    assert.equal(pGrip.value, undefined)
 
     assert.equal(grip.value, 'bar')
   })
   spec('updates just the override', () => {
-    const b = valueGrip<string>('foo')
-    const o = valueGrip(undefined as unknown as string)
-    const grip = withFallbackGrip(o, b.readOnly)
+    const fbGrip = valueGrip<string>('foo')
+    const pGrip = valueGrip(undefined as unknown as string)
+    const grip = withFallbackGrip(pGrip, fbGrip.readOnly)
 
     grip.set('bar')
 
     assert.equal(grip.value, 'bar')
-    assert.equal(b.value, 'foo')
-    assert.equal(o.value, 'bar')
+    assert.equal(fbGrip.value, 'foo')
+    assert.equal(pGrip.value, 'bar')
   })
   spec('updates both gripes', () => {
-    const b = valueGrip<string>('foo')
-    const o = valueGrip(undefined as unknown as string)
-    const grip = withFallbackGrip(o, b)
+    const fbGrip = valueGrip<string>('foo')
+    const pGrip = valueGrip(undefined as unknown as string)
+    const grip = withFallbackGrip(pGrip, fbGrip)
 
     grip.set('bar')
 
     assert.equal(grip.value, 'bar')
-    assert.equal(b.value, 'bar')
-    assert.equal(o.value, 'bar')
+    assert.equal(fbGrip.value, 'bar')
+    assert.equal(pGrip.value, 'bar')
   })
 })
 

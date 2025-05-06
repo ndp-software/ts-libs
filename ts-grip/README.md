@@ -108,7 +108,9 @@ console.log(valueGrp.value); // Outputs: 20 -- not touched
 ```
 ### `withFallbackGrip`
 
-Combines two grips. Use a fallback grip when the primary grip has no value.
+Combines two grips. Use a fallback grip when the primary grip has the 
+value `undefined`. Optionally, pass a function that returns `boolean` 
+value, where `true` means to use the fallback value.
 
 ```typescript
 import { withFallbackGrip, valueGrip } from 'ts-grip';
