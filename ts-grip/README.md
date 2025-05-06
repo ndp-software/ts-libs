@@ -1,12 +1,34 @@
 # ts-grip
 
-`ts-grip` is a TypeScript library that provides various utility functions and classes for managing and manipulating values with grips.
+`ts-grip` is a TypeScript library that provides utility functions and classes for managing and manipulating values with grips.
 
-A grip is a utility object that provides a flexible and consistent interface for managing and manipulating values. Grips can be used to create observable variables, manage state with fallback values, handle cookies, interact with local storage, and more. They offer a unified approach to accessing and setting values, making it easier to implement complex state management and data handling patterns in TypeScript applications.
+A grip is a utility object that provides a unified interface for managing and manipulating values. This library is inspired by the "lens" pattern. Whereas a lens is code that gives you access to a specific path, a grip is "bound" to the source of a specific value.  
+
+Here's a simple example, managing a cookie:
+```typescript
+cookie = cookieGrip('testCookie', 'default')
+console.log(cookie.value) // Outputs: 'default'
+// ...
+cookie.set('newValue') // saves the cookie
+// ...
+console.log(cookie.value) // Outputs: 'newValue'
+```
+
+It can be
+- a primitive value, with path-by-reference semantics
+- a simple abstraction away of where a value is stored, such as
+  - a cookie, local storage, or some other storage
+  - a remote value, that must be fetched or updated through an API
+
+It's also easy to glom on features:
+- grips provide a place to make "observable" variables 
+- grips can be "read-only" or "write-only"
+- manage state with fallback values
+- transform values, such as JSON.stringify or parseInt
 
 ## Installation
 
-To install the package, use npm:
+It uses standard npmjs installation:
 
 ```sh
 npm install ts-grip
@@ -16,7 +38,7 @@ npm install ts-grip
 
 ### `valueGrip`
 
-The `valueGrip` function creates a grip on a mutable variable, and is given an initial value.
+The `valueGrip` function creates a grip on a mutable variable, and is given an initial value. It's just like a variable, except it will be passed by reference, since it's an object.
 
 ```typescript
 import { valueGrip } from 'ts-grip';
@@ -57,22 +79,53 @@ const transformedGrip = transformGrip(grip, {
 console.log(grip.value) // Outputs: "10"
 ```
 
+### `guardedGrip`
+
+Creates a grip that is guarded by a function. If the
+guard returns false, the second grip is ignored, and
+if it's true, the guarded grip is used. It's basically
+a switch, or if/else grip.
+
+```typescript
+import { guardedGrip, valueGrip } from 'ts-grip';
+
+const srcGrip = valueGrip(10);
+const guardedTrue = guardedGrip(srcGrip, () => true, valueGrip(20));
+console.log(guardedTrue.value); // Outputs: 20
+guardedTrue.set(30);
+console.log(srcGrip.value); // Outputs: 30
+console.log(guardedTrue.value); // Outputs: 30
+```
+
+```typescript
+const valueGrp = valueGrip(20)
+const guardedFalse = guardedGrip(srcGrip, () => false, valueGrp);
+console.log(guardedFalse.value); // Outputs: 10
+guardedFalse.set(40);
+console.log(guardedGrip.value); // Outputs: 40
+console.log(srcGrip.value); // Outputs: 40
+console.log(valueGrp.value); // Outputs: 20 -- not touched
+```
 ### `withFallbackGrip`
 
-Combines two grips, using the value from the target grip if defined, 
-otherwise falling back to the value from the fallback grip.
+Combines two grips. Use a fallback grip when the primary grip has no value.
 
 ```typescript
 import { withFallbackGrip, valueGrip } from 'ts-grip';
 
-const targetGrip = valueGrip<number | undefined>(undefined);
-const fallbackGrip = valueGrip(10);
-const combinedGrip = withFallbackGrip(targetGrip, fallbackGrip);
+const primaryGrip = valueGrip<number | undefined>(undefined);
+const fallbackGrip = valueGrip(100);
+
+const combinedGrip = withFallbackGrip(primaryGrip, fallbackGrip);
+
+console.log(combinedGrip.value); // Outputs: 100
+primaryGrip.set(50);
+console.log(combinedGrip.value); // Outputs: 50
 ```
 
 ### `manualGrip`
 
-Creates a manual grip with custom getter and setter functions.
+Creates a manual grip with custom getter and setter functions. Build your own!
 
 ```typescript
 import { manualGrip } from 'ts-grip';
@@ -91,6 +144,7 @@ in fact, a simple `Lens`.
 ```typescript
 import { objectPropGrip } from 'ts-grip';
 
+const lens = objectPropGrip('prop')
 const obj = { prop: 10 };
 const grip = objectPropGrip('prop')(obj);
 ```
@@ -138,7 +192,7 @@ const grip = valueGrip(10);
 const readOnly = readOnlyGrip(grip);
 ```
 
-As a convenience, this is generally available on grips:
+As a convenience, this is generally available:
 
 ```typescript
 const grip = valueGrip.readOnly
@@ -153,19 +207,16 @@ The `cachingGrip` function creates a grip that caches the value of the subject g
 ```typescript
 import { cachingGrip, valueGrip } from 'ts-grip';
 
-// Create a value grip with an initial value
 const originalGrip = valueGrip(10);
 
-// Create a caching grip based on the original grip
 const cachedGrip = cachingGrip(originalGrip);
 
-// Access the value from the cached grip
 console.log(cachedGrip.value); // Outputs: 10
 
-// Set a new value using the cached grip
 cachedGrip.set(20);
 console.log(cachedGrip.value); // Outputs: 20
 
+// ANTI-PATTERN
 // Set a new value directly on the original grip
 // ... this might happen by some external mechanism
 originalGrip.set(30);
@@ -177,34 +228,41 @@ cachedGrip.expire();
 console.log(cachedGrip.value); // Outputs: 30
 ```
 
+### `transformGrip`
 
-
-### `guardedGrip`
-
-Creates a grip that is guarded by a function. If the
-guard returns false, the second grip is ignored, and 
-if it's true, the guarded grip is used. It's basically
-a switch, or if/else grip.
+Apply transformations to a grip's value.
 
 ```typescript
-import { guardedGrip, valueGrip } from 'ts-grip';
+import { transformGrip, valueGrip } from 'ts-grip';
 
-const srcGrip = valueGrip(10);
-const guardedTrue = guardedGrip(srcGrip, () => true, valueGrip(20));
-console.log(guardedTrue.value); // Outputs: 20
-guardedTrue.set(30);
-console.log(srcGrip.value); // Outputs: 30
-console.log(guardedTrue.value); // Outputs: 30
+const grip = valueGrip(42);
+const transformedGrip = transformGrip(grip, {
+  in: (str: string) => parseInt(str, 10),
+  out: (num: number) => num.toString(),
+});
+
+console.log(transformedGrip.value); // Outputs: "42"
+transformedGrip.set("100");
+console.log(grip.value); // Outputs: 100
 ```
 
+### `asAsync`
+
+The `asAsync` function converts a synchronous grip into an asynchronous grip. This is useful when you need to work with grips that involve promises or asynchronous operations while maintaining compatibility with existing synchronous grips. The returned grip ensures that the value is always a Promise, and it updates the original grip when the promise resolves.
+
 ```typescript
-const valueGrp = valueGrip(20)
-const guardedFalse = guardedGrip(srcGrip, () => false, valueGrp);
-console.log(guardedFalse.value); // Outputs: 10
-guardedFalse.set(40);
-console.log(guardedGrip.value); // Outputs: 40
-console.log(srcGrip.value); // Outputs: 40
-console.log(valueGrp.value); // Outputs: 20 -- not touched
+import { valueGrip, asAsync } from 'ts-grip';
+
+const grip = valueGrip(42);
+const asyncGrip = asAsync(grip);
+
+(async () => {
+  console.log(await asyncGrip.value); // Outputs: 42
+
+  asyncGrip.set(Promise.resolve(43));
+  console.log(await asyncGrip.value); // Outputs: 43
+  console.log(grip.value); // Outputs: 43
+})();
 ```
 
 ### `localStorageStringGrip`
@@ -230,7 +288,11 @@ Exposes access and mutation of (JSON-)serializable value in local storage.
 ```typescript
 import { localStorageJSONGrip } from 'ts-grip';
 
-const grip = localStorageJSONGrip('key', { default: 'value' });
+const grip = localStorageJSONGrip('user', { name: 'John', age: 30 });
+console.log(grip.value); // Outputs: { name: 'John', age: 30 }
+
+grip.set({ name: 'Jane', age: 25 });
+console.log(grip.value); // Outputs: { name: 'Jane', age: 25 }
 ```
 
 ## License
