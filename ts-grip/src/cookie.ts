@@ -7,8 +7,8 @@ import {Grip} from "./grip";
  * @param defawlt - The default value if the cookie does not exist.
  * @returns A new instance of a `Grip`.
  */
-export function cookieGrip(cookieName: string, defawlt: string) {
-  return new CookieGrip(cookieName, defawlt);
+export function cookieGrip(cookieName: string, defawlt: string, settings: string = ';path=/;SameSite=Strict') {
+  return new CookieGrip(cookieName, defawlt, settings);
 }
 
 /*
@@ -20,7 +20,9 @@ A `document` may be injected to facilitate testing.
 export class CookieGrip extends Grip<string> {
   private _testingDocument: Partial<Document> | null = null
 
-  constructor(private readonly name: string, private readonly defawlt: string) {
+  constructor(private readonly name: string,
+              private readonly defawlt: string,
+              private readonly settings: string = ';path=/;SameSite=Strict') {
     super()
   }
 
@@ -29,7 +31,7 @@ export class CookieGrip extends Grip<string> {
   }
 
   set(newValue: string) {
-    this.document().cookie = this.name + '=' + newValue + ';path=/;SameSite=Strict'
+    this.document().cookie = this.name + '=' + newValue + this.settings
     return newValue
   }
 

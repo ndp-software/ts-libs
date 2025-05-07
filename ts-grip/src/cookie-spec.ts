@@ -34,6 +34,17 @@ describe('cookieGrip', () => {
     assert(mockDoc.cookie!.includes('testCookie=newValue'));
   });
 
+  spec('should set the cookie settings', () => {
+    const grip = cookieGrip('testCookie', 'defaultValue', ';path=/dev;SameSite=Lenient');
+    mockDoc = {
+      cookie: ''
+    }
+    grip.setDocument(mockDoc);
+    grip.set('newValue');
+    assert(mockDoc.cookie!.includes('SameSite=Lenient'));
+    assert(mockDoc.cookie!.includes('path=/dev'));
+  });
+
   spec('should update the cookie value', () => {
 
     const grip = cookieGrip('testCookie', 'defaultValue');
