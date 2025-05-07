@@ -34,7 +34,7 @@ It uses standard npmjs installation:
 npm install ts-grip
 ```
 
-## Usage
+## Basic Usage
 
 ### `valueGrip`
 
@@ -48,81 +48,24 @@ console.log(grip.value); // Outputs: 10
 grip.set(20);
 console.log(grip.value); // Outputs: 20
 ```
+That's somewhat boring, although pass-by-value is nice at times.
+Sometimes you want to pass a value in to a function, and let the 
+function modify it, not necessarily understanding where it came from.
 
-### `cookieGrip`
-
-Creates a grip on a browser cookie with a default value. The 
-settings for the cookie are `;path=/;SameSite=Strict`
-
+Additionally, you can have additional features, like marking readOnly:
 ```typescript
-import { cookieGrip } from 'ts-grip';
-
-const cookie = cookieGrip('testCookie', 'default');
-console.log(cookie.value); // Outputs: 'default'
-cookie.set('newValue');
-console.log(cookie.value); // Outputs: 'newValue'
+const grip = valueGrip(10).readOnly
 ```
 
-### `transformGrip`
-
-Transforms a grip by applying the provided functions. This
-can be used for casting, coercion, serialization, among many uses.
+Or receive mutation notifications:
 
 ```typescript
-import { transformGrip, valueGrip } from 'ts-grip';
-
-const grip = valueGrip(10);
-const transformedGrip = transformGrip(grip, {
-  in: (str: string) => parseInt(str, 10),
-  out: (num: number) => num.toString()
-});
-console.log(grip.value) // Outputs: "10"
-```
-
-### `guardedGrip`
-
-Creates a grip that is guarded by a function. If the
-guard returns false, the second grip is ignored, and
-if it's true, the guarded grip is used. It's basically
-a switch, or if/else grip.
-
-```typescript
-import { guardedGrip, valueGrip } from 'ts-grip';
-
-const srcGrip = valueGrip(10);
-const guardedTrue = guardedGrip(srcGrip, () => true, valueGrip(20));
-console.log(guardedTrue.value); // Outputs: 20
-guardedTrue.set(30);
-console.log(srcGrip.value); // Outputs: 30
-console.log(guardedTrue.value); // Outputs: 30
-```
-
-```typescript
-const valueGrp = valueGrip(20)
-const guardedFalse = guardedGrip(srcGrip, () => false, valueGrp);
-console.log(guardedFalse.value); // Outputs: 10
-guardedFalse.set(40);
-console.log(guardedGrip.value); // Outputs: 40
-console.log(srcGrip.value); // Outputs: 40
-console.log(valueGrp.value); // Outputs: 20 -- not touched
-```
-### `withFallbackGrip`
-
-Combines two grips. Use a fallback grip when the primary grip has the 
-value `undefined`. Optionally, pass a function that returns `boolean` 
-value, where `true` means to use the fallback value.
-
-```typescript
-import { withFallbackGrip, valueGrip } from 'ts-grip';
-
-const primaryGrip = valueGrip<number | undefined>(undefined);
-const fallbackGrip = valueGrip(100);
-
-const combinedGrip = withFallbackGrip(primaryGrip, fallbackGrip);
-
-console.log(combinedGrip.value); // Outputs: 100
-primaryGrip.set(50);
-console.log(combinedGrip.value); // Outputs: 50
+import { valueGrip } from 'ts-grip'
+const grip = valueGrip(10).observable
+grip.addObserver((next, prev) => {
+  console.log(`Value changed from ${prev} to ${next}`)
+})
+grip.set(20) // Outputs: Value changed from 10 to 20
 ```
 
 ### `manualGrip`
@@ -230,9 +173,64 @@ cachedGrip.expire();
 console.log(cachedGrip.value); // Outputs: 30
 ```
 
+
+
+## Accessors
+
+### `cookieGrip`
+
+Creates a grip on a browser cookie with a default value. 
+
+```typescript
+import { cookieGrip } from 'ts-grip';
+
+const cookie = cookieGrip('testCookie', 'default');
+console.log(cookie.value); // Outputs: 'default'
+cookie.set('newValue');
+console.log(cookie.value); // Outputs: 'newValue'
+```
+The default settings for the cookie are `;path=/;SameSite=Strict`.
+To change this, pass a third parameter.
+
+
+### `localStorageStringGrip`
+
+Exposes access and mutation of a string value in local storage.
+
+```typescript
+import { localStorageStringGrip } from 'ts-grip';
+
+const grip = localStorageStringGrip('key', 'default');
+console.log(grip.value); // Outputs: 'default'
+
+grip.set('newValue');
+
+console.log(grip.value); // Outputs: 'newValue'
+window.localStorage.getItem('key') // 'newValue'
+```
+
+### `localStorageJSONGrip`
+
+Exposes access and mutation of (JSON-)serializable value in local storage.
+
+```typescript
+import { localStorageJSONGrip } from 'ts-grip';
+
+const grip = localStorageJSONGrip('user', { name: 'John', age: 30 });
+console.log(grip.value); // Outputs: { name: 'John', age: 30 }
+
+grip.set({ name: 'Jane', age: 25 });
+console.log(grip.value); // Outputs: { name: 'Jane', age: 25 }
+```
+
+
+
+## Mutators
+
 ### `transformGrip`
 
-Apply transformations to a grip's value.
+Transforms a grip by applying the provided functions. This
+can be used for casting, coercion, serialization, among many uses.
 
 ```typescript
 import { transformGrip, valueGrip } from 'ts-grip';
@@ -267,35 +265,55 @@ const asyncGrip = asAsync(grip);
 })();
 ```
 
-### `localStorageStringGrip`
 
-Exposes access and mutation of a string value in local storage.
+## Aggregators
+### `guardedGrip`
 
-```typescript
-import { localStorageStringGrip } from 'ts-grip';
-
-const grip = localStorageStringGrip('key', 'default');
-console.log(grip.value); // Outputs: 'default'
-
-grip.set('newValue');
-
-console.log(grip.value); // Outputs: 'newValue'
-window.localStorage.getItem('key') // 'newValue'
-```
-
-### `localStorageJSONGrip`
-
-Exposes access and mutation of (JSON-)serializable value in local storage.
+Creates a grip that is guarded by a function. If the
+guard returns false, the second grip is ignored, and
+if it's true, the guarded grip is used. It's basically
+a switch, or if/else grip.
 
 ```typescript
-import { localStorageJSONGrip } from 'ts-grip';
+import { guardedGrip, valueGrip } from 'ts-grip';
 
-const grip = localStorageJSONGrip('user', { name: 'John', age: 30 });
-console.log(grip.value); // Outputs: { name: 'John', age: 30 }
-
-grip.set({ name: 'Jane', age: 25 });
-console.log(grip.value); // Outputs: { name: 'Jane', age: 25 }
+const srcGrip = valueGrip(10);
+const guardedTrue = guardedGrip(srcGrip, () => true, valueGrip(20));
+console.log(guardedTrue.value); // Outputs: 20
+guardedTrue.set(30);
+console.log(srcGrip.value); // Outputs: 30
+console.log(guardedTrue.value); // Outputs: 30
 ```
+
+```typescript
+const valueGrp = valueGrip(20)
+const guardedFalse = guardedGrip(srcGrip, () => false, valueGrp);
+console.log(guardedFalse.value); // Outputs: 10
+guardedFalse.set(40);
+console.log(guardedGrip.value); // Outputs: 40
+console.log(srcGrip.value); // Outputs: 40
+console.log(valueGrp.value); // Outputs: 20 -- not touched
+```
+
+### `withFallbackGrip`
+
+Combines two grips. Use a fallback grip when the primary grip has the 
+value `undefined`. Optionally, pass a function that returns `boolean` 
+value, where `true` means to use the fallback value.
+
+```typescript
+import { withFallbackGrip, valueGrip } from 'ts-grip';
+
+const primaryGrip = valueGrip<number | undefined>(undefined);
+const fallbackGrip = valueGrip(100);
+
+const combinedGrip = withFallbackGrip(primaryGrip, fallbackGrip);
+
+console.log(combinedGrip.value); // Outputs: 100
+primaryGrip.set(50);
+console.log(combinedGrip.value); // Outputs: 50
+```
+
 
 ## License
 
@@ -305,3 +323,8 @@ This project is licensed under the MIT License.
 ## TODOs
 
 - [ ] is an observable grip also observable. discuss.
+- [ ] combine guarded and fallback grips
+- [ ] document async behaviors
+- [ ] sessionStorage
+- [ ] demo of a cookie/localStorage grip
+- [ ] caching grip has some sort of built-in expiration mechanism
