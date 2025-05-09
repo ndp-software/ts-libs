@@ -33,6 +33,8 @@ set(newValue: T): void: Abstract setter method to set a new value.
 get readOnly(): Returns a read-only version of the grip.
 get observable(): Returns an observable version of the grip.
 */
+import {isGrip} from "./util";
+
 export abstract class Grip<T> {
   abstract get value(): T;
 
@@ -56,19 +58,39 @@ export abstract class Grip<T> {
    *    - `observeInitialValue` - whether to call the observer
    *      when it initially added. Defaults to `false`.
    */
-  get observable() {
+  get observable(): ObservableGrip<T> {
     return observeableGrip(this)
   }
 }
 
-export function observeableGrip<T, L extends Grip<T>>(grip: L):
-  L & { addObserver: (handler: Observer<T>, options?: ObserverOptions) => () => void } {
+export type GripTypeOf<G> = G extends Grip<infer T> ? T : never;
+
+
+/*
+   O B S E R V A B L E
+ */
+type ObservableGrip<T> = Grip<T> & Observable<T>
+type ObserveHandler<T> = (next: T, prev: T | undefined) => void
+type AddObserverOptions = { observeInitialValue: boolean }
+type Observable<T> = {
+  addObserver: (handler: ObserveHandler<T>,
+                options?: AddObserverOptions) => () => void
+}
+
+
+export function isObservableGrip<T>(grip: Grip<T>): grip is ObservableGrip<T> {
+  return isGrip<T> && (grip as any).addObserver !== undefined;
+}
+
+
+export function observeableGrip<G extends Grip<unknown>, T = GripTypeOf<G>>(grip: G):
+  G & Observable<T> {
   const observers: Array<Observer<T>> = [];
 
   return Object.create(grip, {
     set: {
       value: (newValue: T) => {
-        const oldValue = grip.value;
+        const oldValue = grip.value as T;
         grip.set(newValue);
         observers.forEach(observer => observer(newValue, oldValue));
         return newValue
@@ -77,7 +99,7 @@ export function observeableGrip<T, L extends Grip<T>>(grip: L):
     addObserver: {
       value: (handler: Observer<T>, {observeInitialValue}: ObserverOptions = {observeInitialValue: false}): () => void => {
         observers.push(handler);
-        if (observeInitialValue) setTimeout(() => handler(grip.value, undefined), 0);
+        if (observeInitialValue) setTimeout(() => handler(grip.value as T, undefined), 0);
         return () => {
           const index = observers.indexOf(handler);
           if (index > -1) {
@@ -89,16 +111,10 @@ export function observeableGrip<T, L extends Grip<T>>(grip: L):
   });
 }
 
-
-interface ObservableGrip<T> extends Grip<T> {
-  addObserver: (handler: (next: T, prev: T | undefined) => void, options?: { observeInitialValue: boolean }) => () => void;
-}
-
-export function isObservableGrip<T>(grip: Grip<T>): grip is ObservableGrip<T> {
-  return (grip as ObservableGrip<T>).addObserver !== undefined;
-}
-
-export function readOnlyGrip<T, L extends Grip<T>>(grip: L): L {
+export function readOnlyGrip<
+  G extends object|null, // needs to be a Grip<unknown>
+  T = GripTypeOf<G>
+>(grip: G): G {
   return Object.create(grip, {
     set: {
       value: (value: T) => {

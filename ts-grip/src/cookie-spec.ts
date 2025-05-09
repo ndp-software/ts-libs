@@ -1,6 +1,7 @@
 import {describe, it as spec} from "node:test";
 import assert from "node:assert/strict";
 import {cookieGrip} from "./cookie";
+import {Grip, GripTypeOf, observeableGrip} from "./grip";
 
 
 describe('cookieGrip', () => {
@@ -68,4 +69,31 @@ describe('cookieGrip', () => {
     assert.equal(grip1.value, 'value1');
     assert.equal(grip2.value, 'value2');
   });
+
+  spec('infers type of Grip for observableGrip function', () => {
+    type MyType = 'foo' | 'bar' | 'baz'
+    const grip = cookieGrip('mode', 'baz' as MyType)
+    grip.setDocument({
+      cookie: 'testCookie=oldValue'
+    })
+    const obs = observeableGrip(grip)
+    obs.addObserver(updateBodyClass, {observeInitialValue: true})
+
+    function updateBodyClass(next: MyType, prev: MyType | undefined) {
+    }
+  })
+
+  spec('infers type of Grip from .observer', () => {
+    type MyType = 'foo' | 'bar' | 'baz'
+    const grip = cookieGrip('mode', 'baz' as MyType)
+    grip.setDocument({
+      cookie: 'testCookie=oldValue'
+    })
+    const obs = grip.observable
+    obs.addObserver(updateBodyClass, {observeInitialValue: true})
+
+    function updateBodyClass(next: MyType, prev: MyType | undefined) {
+    }
+  })
+
 });

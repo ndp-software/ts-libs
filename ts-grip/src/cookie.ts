@@ -7,7 +7,10 @@ import {Grip} from "./grip";
  * @param defawlt - The default value if the cookie does not exist.
  * @returns A new instance of a `Grip`.
  */
-export function cookieGrip(cookieName: string, defawlt: string, settings: string = ';path=/;SameSite=Strict') {
+export function cookieGrip<T extends string>(
+  cookieName: string,
+  defawlt: T,
+  settings: string = ';path=/;SameSite=Strict') {
   return new CookieGrip(cookieName, defawlt, settings);
 }
 
@@ -15,29 +18,30 @@ export function cookieGrip(cookieName: string, defawlt: string, settings: string
 The CookieGrip class extends Grip and provides an implementation
 of a grip backed by browser cookies. Assumes all values are strings.
 
+Using strong typing should work well, but there's the risk
+than an existing cookie will not conform to the type, and there
+is no run-time type checking.
+
 A `document` may be injected to facilitate testing.
  */
-export class CookieGrip extends Grip<string> {
+export class CookieGrip<T extends string> extends Grip<T> {
   private _testingDocument: Partial<Document> | null = null
 
   constructor(private readonly name: string,
-              private readonly defawlt: string,
+              private readonly defawlt: T,
               private readonly settings: string = ';path=/;SameSite=Strict') {
     super()
   }
 
   get value() {
-    return this.readCookie(this.name) ?? this.defawlt
+    return (this.readCookie(this.name) ?? this.defawlt) as T
   }
 
-  set(newValue: string) {
+  set(newValue: T) {
     this.document().cookie = this.name + '=' + newValue + this.settings
     return newValue
   }
 
-  setDocument(d: Partial<Document>) {
-    this._testingDocument = d
-  }
 
   private readCookie(name: string): string | null {
     const nameEQ = name + '='
@@ -54,6 +58,9 @@ export class CookieGrip extends Grip<string> {
   }
 
   // For testing...
+  setDocument(d: Partial<Document>) {
+    this._testingDocument = d
+  }
   private document(): Partial<Document> {
     return this._testingDocument ?? window.document
   }
