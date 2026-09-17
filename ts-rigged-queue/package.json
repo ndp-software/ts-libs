@@ -1,0 +1,42 @@
+{
+  "name": "ts-rigged-queue",
+  "version": "0.1.0",
+  "description": "A bounded queue with pinned items and an evictable pool",
+  "homepage": "https://github.com/ndp-software/ts-libs/tree/main/ts-rigged-queue",
+  "main": "dist/index.js",
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "node --import tsx --test src/*.test.ts",
+    "build": "rimraf dist && tsc",
+    "verify": "npm run build && npm test",
+    "prepublishOnly": "npm run verify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ndp-software/ts-libs"
+  },
+  "keywords": [
+    "queue",
+    "cache",
+    "lru",
+    "pinned",
+    "typescript",
+    "ts"
+  ],
+  "author": "Andrew Peterson dba NDP Software",
+  "license": "MPL-2.0",
+  "files": [
+    "README.md",
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "src/RiggedQueue.ts",
+    "src/index.ts"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.2.1",
+    "rimraf": "^5",
+    "tsx": "^4.19",
+    "typescript": "^5"
+  }
+}

@@ -13,6 +13,10 @@ Type-safe and useful environment variable helper.
 
 Composable retry helper.
 
+# ts-rigged-queue
+
+A bounded queue with pinned items and an evictable pool.
+
 # [Grid Navigator](https://github.com/ndp-software/grid-navigator)
 
 A no-fuss accessible keyboard navigation handling for a flexible grid component.
